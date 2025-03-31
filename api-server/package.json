@@ -1,0 +1,8 @@
+{
+  "name": "engtochin-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "@vercel/node": "^2.15.1",
+    "mysql2": "^3.6.1"
+  }
+}
