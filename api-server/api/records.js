@@ -12,12 +12,10 @@ const pool = mysql.createPool({
 }).promise();
 
 module.exports = async (req, res) => {
-  // 启用CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
 
-  // 处理 OPTIONS 请求
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -25,9 +23,11 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === 'POST') {
+      console.log('收到POST请求:', req.body);  // 添加日志
       const { student, taskTitle, timeUsed } = req.body;
       
       if (!student || !taskTitle || timeUsed === undefined) {
+        console.error('数据不完整:', req.body);  // 添加错误日志
         return res.status(400).json({ error: '缺少必要的数据' });
       }
 
@@ -36,10 +36,10 @@ module.exports = async (req, res) => {
         [student, taskTitle, timeUsed]
       );
       
-      res.json({ success: true, id: result.insertId });
+      res.status(200).json({ success: true, id: result.insertId });
     } else if (req.method === 'GET') {
       const [rows] = await pool.query('SELECT * FROM training_records ORDER BY created_at DESC');
-      res.json(rows);
+      res.status(200).json(rows);
     } else {
       res.status(405).json({ error: '不支持的请求方法' });
     }
